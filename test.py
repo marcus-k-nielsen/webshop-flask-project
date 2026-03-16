@@ -14,6 +14,7 @@ def products():
 def cart():
     return render_template("cart.html")
 
+hej
 
 if __name__ == "__main__":
     app.run(debug=True)
