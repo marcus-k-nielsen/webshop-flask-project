@@ -13,11 +13,8 @@ def products():
 @app.route("/cart")
 def cart():
     return render_template("cart.html")
-asd
-hej
-hello there
+
 
 if __name__ == "__main__":
     app.run(debug=True)
 
-    Hej boys
