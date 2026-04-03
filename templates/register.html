@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 20px;
+    }
+
+    .register-card {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 40px;
+        width: 420px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .register-card h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #3e2c23;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .form-full {
+        grid-column: span 2;
+    }
+
+    .register-card input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .register-card input:focus {
+        border-color: #6f4e37;
+    }
+
+    .register-card button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #6f4e37, #8b5e3c);
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 15px;
+    }
+
+    .register-card button:hover {
+        transform: scale(1.03);
+        background: linear-gradient(135deg, #5a3e2b, #6f4e37);
+    }
+
+    .error {
+        color: red;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card">
+        <h1>Create Account</h1>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/register">
+            <div class="form-grid">
+
+                <input type="text" name="firstname" placeholder="First Name" required>
+                <input type="text" name="lastname" placeholder="Last Name" required>
+
+                <input class="form-full" type="text" name="address" placeholder="Address" required>
+
+                <input type="text" name="zip" placeholder="ZIP" required>
+                <input type="text" name="city" placeholder="City" required>
+
+                <input class="form-full" type="text" name="country" placeholder="Country" required>
+
+                <input class="form-full" type="text" name="phone" placeholder="Phone Number" required>
+
+                <input class="form-full" type="email" name="email" placeholder="Email" required>
+
+                <input class="form-full" type="password" name="password" placeholder="Password" required>
+
+            </div>
+
+            <button type="submit">Create User</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

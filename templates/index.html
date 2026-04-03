@@ -2,8 +2,100 @@
 
 {% block content %}
 
-<h1>Welcome to my Webshop</h1>
+<style>
+    body {
+        background-color: #f3e9dc; /* soft coffee background */
+        font-family: Arial, sans-serif;
+        margin: 0;
+    }
 
-<p>This is the homepage.</p>
+    .container {
+        text-align: center;
+        margin-top: 80px;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin-bottom: 10px;
+        color: #3e2c23;
+    }
+
+    p {
+        color: #6b4f3a;
+    }
+
+    .card-container {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 50px;
+        flex-wrap: wrap; /* makes it responsive */
+    }
+
+    .card {
+        background-color: #ffffff;
+        padding: 30px;
+        width: 240px;
+        border-radius: 18px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
+    .card h3 {
+        margin-bottom: 15px;
+        color: #3e2c23;
+    }
+
+    .card p {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .card a {
+        text-decoration: none;
+        color: white;
+        background-color: #6f4e37; /* coffee brown */
+        padding: 10px 18px;
+        border-radius: 10px;
+        display: inline-block;
+        transition: 0.3s;
+    }
+
+    .card a:hover {
+        background-color: #5a3e2b;
+    }
+</style>
+
+<div class="container">
+    <h1>Welcome to my Webshop</h1>
+    <p>Choose how you want to continue</p>
+
+    <div class="card-container">
+
+        <div class="card">
+            <h3>Continue as Guest</h3>
+            <p>Browse products without creating an account</p>
+            <a href="/shop">Continue</a>
+        </div>
+
+        <div class="card">
+            <h3>Login</h3>
+            <p>Access your account and saved cart</p>
+            <a href="/login">Login</a>
+        </div>
+
+        <div class="card">
+            <h3>Register</h3>
+            <p>Create an account for a better experience</p>
+            <a href="/register">Sign Up</a>
+        </div>
+
+    </div>
+</div>
 
 {% endblock %}

@@ -1,22 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Webshop</title>
+    <meta charset="UTF-8">
+    <title>KaffeShoppen</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #f3e9dc, #e8d8c3);
+        }
+
+        /* NAVBAR */
+        nav {
+            background-color: #3e2c23;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-left {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        nav a {
+            color: #f3e9dc;
+            text-decoration: none;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #ffffff;
+        }
+
+        /* CONTENT WRAPPER */
+        .content {
+            padding: 20px;
+        }
+
+        hr {
+            display: none; /* remove old line */
+        }
+    </style>
 </head>
 
 <body>
 
 <nav>
-    <a href="/">Home</a>
-    <a href="/products">Products</a>
-    <a href="/cart">Cart</a>
+    <div class="nav-left">☕ KaffeShoppen</div>
+
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/products">Products</a>
+        <a href="/register">Register</a>
+        <a href="/login">Login</a>
+        <a href="/cart">Cart</a>
+    </div>
 </nav>
 
-<hr>
-
-{% block content %}
-{% endblock %}
+<div class="content">
+    {% block content %}
+    {% endblock %}
+</div>
 
 </body>
 </html>

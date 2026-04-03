@@ -2,12 +2,94 @@
 
 {% block content %}
 
-<h1>Products</h1>
+<style>
+    .products-container {
+        padding: 40px;
+        text-align: center;
+    }
 
-<ul>
-    <li>Keyboard - 50$</li>
-    <li>Mouse - 25$</li>
-    <li>Monitor - 200$</li>
-</ul>
+    .products-container h1 {
+        color: #3e2c23;
+        margin-bottom: 40px;
+    }
+
+    .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+    }
+
+    .product {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        transition: 0.3s ease;
+    }
+
+    .product:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+
+    .product img {
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        margin-bottom: 15px;
+    }
+
+    .product h2 {
+        font-size: 18px;
+        color: #3e2c23;
+        margin-bottom: 10px;
+    }
+
+    .price {
+        color: #6f4e37;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .product button {
+        background: linear-gradient(135deg, #6f4e37, #8b5e3c);
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .product button:hover {
+        transform: scale(1.05);
+        background: linear-gradient(135deg, #5a3e2b, #6f4e37);
+    }
+</style>
+
+<div class="products-container">
+    <h1>Our Products</h1>
+
+    <div class="products">
+
+        {% for product in products %}
+
+        <div class="product">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+
+            <h2>{{ product.name }}</h2>
+
+            <div class="price">{{ product.price }} DKK</div>
+
+            <form action="/add_to_cart" method="POST">
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <button type="submit">Add to Cart</button>
+            </form>
+        </div>
+
+        {% endfor %}
+
+    </div>
+</div>
 
 {% endblock %}
