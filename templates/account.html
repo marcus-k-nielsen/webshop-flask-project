@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .account-container {
+        display: flex;
+        max-width: 1000px;
+        margin: 50px auto;
+        gap: 30px;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 220px;
+        background: rgba(255,255,255,0.95);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        height: fit-content;
+    }
+
+    .sidebar h2 {
+        margin-bottom: 20px;
+        color: #3e2c23;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 10px;
+        margin-bottom: 10px;
+        text-decoration: none;
+        color: #3e2c23;
+        border-radius: 10px;
+        transition: 0.2s;
+    }
+
+    .sidebar a:hover {
+        background: #f3e9dc;
+    }
+
+    .logout {
+        color: #a94442;
+        font-weight: bold;
+    }
+
+    /* CONTENT */
+    .content-box {
+        flex: 1;
+        background: rgba(255,255,255,0.95);
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    .content-box h1 {
+        margin-bottom: 20px;
+        color: #3e2c23;
+    }
+
+    .info p {
+        margin: 8px 0;
+        color: #6b4f3a;
+    }
+
+    .info strong {
+        color: #3e2c23;
+    }
+
+    /* ORDERS */
+    .order {
+        border-bottom: 1px solid #eee;
+        padding: 10px 0;
+    }
+</style>
+
+<div class="account-container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>My Account</h2>
+
+        <a href="/account">Profile</a>
+        <a href="/orders">Orders</a>
+        <a href="/update">Update Profile</a>
+        <a href="/logout" class="logout">Logout</a>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content-box">
+
+        <h1>Profile Information</h1>
+
+        <div class="info">
+            <p><strong>Name:</strong> {{ user.firstname }} {{ user.lastname }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Phone:</strong> {{ user.phone }}</p>
+            <p><strong>Address:</strong> {{ user.address }}</p>
+            <p><strong>City:</strong> {{ user.city }}</p>
+            <p><strong>ZIP:</strong> {{ user.zip }}</p>
+            <p><strong>Country:</strong> {{ user.country }}</p>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

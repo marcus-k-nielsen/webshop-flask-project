@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .cart-container {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 20px;
+    }
+
+    .cart-container h1 {
+        text-align: center;
+        color: #3e2c23;
+        margin-bottom: 30px;
+    }
+
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 18px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+
+    /* LEFT SIDE: IMAGE + TEXT */
+    .item-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex: 1;
+    }
+
+    .item-info img {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        border-radius: 12px;
+        background: #f8f8f8;
+        padding: 10px;
+    }
+
+    .item-text h2 {
+        margin: 0 0 8px 0;
+        color: #3e2c23;
+        font-size: 18px;
+    }
+
+    .item-text p {
+        margin: 3px 0;
+        color: #6b4f3a;
+    }
+
+    .item-text p:first-of-type {
+        font-weight: bold;
+        color: #6f4e37;
+    }
+
+    /* RIGHT SIDE: BUTTONS */
+    .item-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .item-actions form {
+        margin: 0;
+    }
+
+    .btn {
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.2s;
+    }
+
+    .btn-add {
+        background-color: #6f4e37;
+        color: white;
+    }
+
+    .btn-remove {
+        background-color: #ccc;
+    }
+
+    .btn-delete {
+        background-color: #a94442;
+        color: white;
+    }
+
+    .btn:hover {
+        transform: scale(1.05);
+    }
+
+    .total {
+        text-align: right;
+        font-size: 22px;
+        font-weight: bold;
+        color: #3e2c23;
+        margin-top: 30px;
+    }
+
+    .empty {
+        text-align: center;
+        color: #6b4f3a;
+        margin-top: 50px;
+    }
+    .cart-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    }
+
+    .checkout-btn {
+        text-decoration: none;
+        background: linear-gradient(135deg, #4caf50, #66bb6a);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .checkout-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(135deg, #43a047, #4caf50);
+    }
+</style>
+
+<div class="cart-container">
+    <h1>Your Cart</h1>
+
+    {% if cart_items %}
+
+        {% for item in cart_items %}
+
+        <div class="cart-item">
+
+            <!-- LEFT: IMAGE + TEXT -->
+            <div class="item-info">
+                <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
+
+                <div class="item-text">
+                    <h2>{{ item.product.name }}</h2>
+                    <p>Price: {{ item.product.price }} DKK</p>
+                    <p>Quantity: {{ item.quantity }}</p>
+                    <p>Subtotal: {{ item.subtotal }} DKK</p>
+                </div>
+            </div>
+
+            <!-- RIGHT: ACTIONS -->
+            <div class="item-actions">
+
+                <!-- ➕ -->
+                <form action="{{ url_for('increase_quantity') }}" method="POST">
+                    <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                    <button class="btn btn-add">+</button>
+                </form>
+
+                <!-- ➖ -->
+                <form action="{{ url_for('decrease_quantity') }}" method="POST">
+                    <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                    <button class="btn btn-remove">-</button>
+                </form>
+
+                <!-- ❌ -->
+                <form action="{{ url_for('remove_from_cart') }}" method="POST">
+                    <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                    <button class="btn btn-delete">Remove</button>
+                </form>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+        <div class="cart-summary">
+            <div class="total">
+                Total: {{ total }} DKK
+            </div>
+
+            <a href="/checkout" class="checkout-btn">Proceed to Checkout</a>
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+            <h2>Your cart is empty ☕</h2>
+            <p>Go add some products!</p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

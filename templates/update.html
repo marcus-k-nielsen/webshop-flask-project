@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .update-container {
+        display: flex;
+        justify-content: center;
+        padding: 60px 20px;
+    }
+
+    .update-card {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 40px;
+        width: 420px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .update-card h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #3e2c23;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .form-full {
+        grid-column: span 2;
+    }
+
+    .form-grid div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        font-size: 13px;
+        margin-bottom: 5px;
+        color: #3e2c23;
+        font-weight: 600;
+    }
+
+    .update-card input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .update-card input:focus {
+        border-color: #6f4e37;
+    }
+
+    .update-card button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #6f4e37, #8b5e3c);
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 15px;
+    }
+
+    .update-card button:hover {
+        transform: scale(1.03);
+        background: linear-gradient(135deg, #5a3e2b, #6f4e37);
+    }
+</style>
+
+<div class="update-container">
+    <div class="update-card">
+        <h1>Update Profile</h1>
+
+        <form method="POST" action="/update">
+            <div class="form-grid">
+
+                <div>
+                    <label>First Name</label>
+                    <input type="text" name="firstname" value="{{ user_info[3] }}" required>
+                </div>
+
+                <div>
+                    <label>Last Name</label>
+                    <input type="text" name="lastname" value="{{ user_info[4] }}" required>
+                </div>
+
+                <div class="form-full">
+                    <label>Address</label>
+                    <input type="text" name="address" value="{{ user_info[5] }}" required>
+                </div>
+
+                <div>
+                    <label>ZIP</label>
+                    <input type="text" name="zip" value="{{ user_info[6] }}" required>
+                </div>
+
+                <div>
+                    <label>City</label>
+                    <input type="text" name="city" value="{{ user_info[7] }}" required>
+                </div>
+
+                <div class="form-full">
+                    <label>Country</label>
+                    <input type="text" name="country" value="{{ user_info[8] }}" required>
+                </div>
+
+                <div class="form-full">
+                    <label>Phone Number</label>
+                    <input type="text" name="phone" value="{{ user_info[9] }}" required>
+                </div>
+
+                <div class="form-full">
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ user_info[1] }}" required>
+                </div>
+
+                <div class="form-full">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter new password">
+                </div>
+
+            </div>
+
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,9 +1,7 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import session
 import psycopg2
 
 con=psycopg2.connect("postgresql://postgres.ltwkdwxckpewhmtpjpvj:oCD4aNWbC7dd7MYG@aws-1-eu-west-1.pooler.supabase.com:6543/postgres")
-
-app = Flask(__name__)
 
 class User:
     def __init__(self,email, password, firstname, address, zip, city, country, phone, lastname):
@@ -38,4 +36,17 @@ class User:
             session['user_id'] = user[0] # gemmer brugerens ID i sessionen for at holde dem logget ind
             return True
         return False
+    
+    def get_user_info(self):
+        cur = con.cursor()
+        cur.execute("SELECT * FROM bruger WHERE id = %s", (session['user_id'],)) # Henter nuværende oplysninger for den loggede bruger baseret på deres ID, som er gemt i sessionen
+        user_info = cur.fetchone() # 'fetchone()' henter den første række, der matcher kriterierne. Hvis ingen rækker matcher, returneres 'None'.
+        cur.close()
+        return user_info
+    
+    def update(self, firstname, lastname, address, zip, city, country, phone, email, password):
+        cur = con.cursor()
+        cur.execute("UPDATE bruger SET firstname = %s, lastname = %s, address = %s, zip = %s, city = %s, country = %s, phone = %s, email = %s, password = %s WHERE id = %s", (firstname, lastname, address, zip, city, country, phone, email, password, session['user_id'])) # Opdaterer brugerens oplysninger i databasen baseret på deres ID
+        con.commit()
+        cur.close()
     
