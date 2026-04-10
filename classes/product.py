@@ -13,7 +13,7 @@ class Product:
         self.name = name
         self.price = price
         self.stock = stock
-        self.image_url = picture
+        self.picture = picture
 
     def is_in_stock(self):
         return self.stock > 0
@@ -32,7 +32,7 @@ class Product:
     def get_products(self):
         cur.execute("SELECT * FROM products")
         rows = cur.fetchall()
-        return [Product(*row) for row in rows]
+        return rows
 
     # Instance method to fetch product by id
     def get_product_by_id(self, product_id):

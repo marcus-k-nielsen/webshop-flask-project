@@ -10,9 +10,6 @@ class Cart:
     def __init__(self):
         self.items = self.load_cart()
 
-    # ------------------------
-    # LOAD CART
-    # ------------------------
     def load_cart(self):
         # Logged in → DB
         if "user_id" in session:
@@ -21,18 +18,13 @@ class Cart:
         # Guest → session
         return session.get("cart", {})
 
-    # ------------------------
-    # SAVE CART
-    # ------------------------
+   
     def save(self):
         if "user_id" in session:
             self.save_cart_to_db(session["user_id"])
         else:
             session["cart"] = self.items
 
-    # ------------------------
-    # ADD PRODUCT
-    # ------------------------
     def add(self, product_id, qty=1):
         product_id = str(product_id)
 
@@ -43,9 +35,6 @@ class Cart:
 
         self.save()
 
-    # ------------------------
-    # REMOVE PRODUCT
-    # ------------------------
     def remove(self, product_id):
         product_id = str(product_id)
 
@@ -54,9 +43,6 @@ class Cart:
 
         self.save()
 
-    # ------------------------
-    # UPDATE QUANTITY
-    # ------------------------
     def update(self, product_id, qty):
         product_id = str(product_id)
 
@@ -67,9 +53,6 @@ class Cart:
 
         self.save()
 
-    # ------------------------
-    # TOTAL PRICE
-    # ------------------------
     def total(self):
         total = 0
         p = Product()
@@ -81,9 +64,6 @@ class Cart:
 
         return total
 
-    # ------------------------
-    # DB FUNCTIONS
-    # ------------------------
     def get_cart_from_db(self, user_id):
         cur = con.cursor()
         cur.execute("SELECT product_id, quantity FROM cart WHERE user_id = %s", (user_id,))
