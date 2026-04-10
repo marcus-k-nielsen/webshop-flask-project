@@ -1,38 +1,31 @@
 from flask import session
 from classes.product import Product
-import psycopg2
+from psycopg2 import pool
 
-con = psycopg2.connect(
+# 🔥 Connection pool (shared)
+connection_pool = pool.SimpleConnectionPool(
+    1, 10,
     "postgresql://postgres.ltwkdwxckpewhmtpjpvj:oCD4aNWbC7dd7MYG@aws-1-eu-west-1.pooler.supabase.com:6543/postgres"
 )
 
+def get_connection():
+    return connection_pool.getconn()
+
+def release_connection(conn):
+    connection_pool.putconn(conn)
+
+
 class Cart:
     def __init__(self):
-        self.items = self.load_cart()
+        self.items = session.get("cart", {})  # 🔥 ALWAYS use session
 
-    def load_cart(self):
-        # Logged in → DB
-        if "user_id" in session:
-            return self.get_cart_from_db(session["user_id"])
-
-        # Guest → session
-        return session.get("cart", {})
-
-   
     def save(self):
-        if "user_id" in session:
-            self.save_cart_to_db(session["user_id"])
-        else:
-            session["cart"] = self.items
+        session["cart"] = self.items
 
     def add(self, product_id, qty=1):
         product_id = str(product_id)
 
-        if product_id in self.items:
-            self.items[product_id] += qty
-        else:
-            self.items[product_id] = qty
-
+        self.items[product_id] = self.items.get(product_id, 0) + qty
         self.save()
 
     def remove(self, product_id):
@@ -57,37 +50,13 @@ class Cart:
         total = 0
         p = Product()
 
+        # 🔥 Fetch ALL products ONCE
+        all_products = p.get_products()
+        product_dict = {prod.id: prod for prod in all_products}
+
         for product_id, qty in self.items.items():
-            product = p.get_product_by_id(product_id)
+            product = product_dict.get(int(product_id))
             if product:
                 total += product.price * qty
 
         return total
-
-    def get_cart_from_db(self, user_id):
-        cur = con.cursor()
-        cur.execute("SELECT product_id, quantity FROM cart WHERE user_id = %s", (user_id,))
-        rows = cur.fetchall()
-        cur.close()
-
-        cart = {}
-        for row in rows:
-            cart[str(row[0])] = row[1]
-
-        return cart
-
-    def save_cart_to_db(self, user_id):
-        cur = con.cursor()
-
-        # Clear old cart
-        cur.execute("DELETE FROM cart WHERE user_id = %s", (user_id,))
-
-        # Insert new cart
-        for product_id, quantity in self.items.items():
-            cur.execute(
-                "INSERT INTO cart (user_id, product_id, quantity) VALUES (%s, %s, %s)",
-                (user_id, product_id, quantity)
-            )
-
-        con.commit()
-        cur.close()
