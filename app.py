@@ -107,8 +107,8 @@ def products():
     # Create a Product instance to access the methods
     p = Product()
     all_products = p.get_products()       # Fetch all products
-    id_product = p.get_product_by_id(3)  # Example fetch by id
-    print("Product found by id:", id_product.name, id_product.price, "$", id_product.stock, "In stock")
+    #id_product = p.get_product_by_id(3)  # Example fetch by id
+    #print("Product found by id:", id_product.name, id_product.price, "$", id_product.stock, "In stock")
     print("All products:", all_products)
     return render_template("products.html", products=all_products)
 
