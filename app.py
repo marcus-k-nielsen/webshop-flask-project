@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, request, session, url_for
 from classes.product import Product
 from classes.user import User
 from classes.cart import Cart
+from classes.order import Order
 
 
 app = Flask(__name__)
@@ -191,6 +192,29 @@ def decrease_quantity():
     cart.update(product_id, current_qty - 1)
 
     return redirect(url_for("view_cart"))
+
+
+@app.route("/place_order", methods=["POST"])
+def place_order():
+    order = Order()
+    success, result = order.place_order()
+
+    if not success:
+        return result
+
+    return redirect(url_for("account"))
+
+from classes.order import Order
+
+@app.route("/orders")
+def orders():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    order = Order()
+    user_orders = order.get_orders_by_user(session["user_id"])
+
+    return render_template("orders.html", orders=user_orders)
 
 
 

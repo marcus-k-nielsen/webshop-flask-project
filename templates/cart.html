@@ -186,8 +186,9 @@
                 Total: {{ total }} DKK
             </div>
 
-            <a href="/checkout" class="checkout-btn">Proceed to Checkout</a>
-        </div>
+            <form action="{{ url_for('place_order') }}" method="POST">
+                <button type="submit" class="checkout-btn">Place Order</button>
+            </form>
 
     {% else %}
 
