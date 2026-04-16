@@ -140,6 +140,23 @@
                     Status: {{ order.status }} | Date: {{ order.created_at }}
                 </div>
 
+                {% if order.status != "cancelled" %}
+    <form action="{{ url_for('cancel_order') }}" method="POST">
+        <input type="hidden" name="order_id" value="{{ order.id }}">
+        <button style="
+            background:#a94442;
+            color:white;
+            border:none;
+            padding:8px 12px;
+            border-radius:8px;
+            cursor:pointer;
+            margin-top:10px;
+        ">
+            Cancel Order
+        </button>
+    </form>
+    {% endif %}
+
                 <ul class="order-items">
                     {% for item in order["items"] %}
                         <li class="order-item">

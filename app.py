@@ -217,5 +217,17 @@ def orders():
     return render_template("orders.html", orders=user_orders)
 
 
+@app.route("/cancel_order", methods=["POST"])
+def cancel_order():
+    order_id = request.form.get("order_id")
+
+    order = Order()
+    success, message = order.cancel_order(order_id)
+
+    if not success:
+        return message
+
+    return redirect(url_for("orders"))
+
 
 app.run(debug=True)

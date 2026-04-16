@@ -65,51 +65,48 @@ class Order:
 
         user_id = session["user_id"]
 
-        conn = get_connection()
+        conn = psycopg2.connect(
+            "postgresql://postgres.ltwkdwxckpewhmtpjpvj:oCD4aNWbC7dd7MYG@aws-1-eu-west-1.pooler.supabase.com:6543/postgres"
+        )
         cur = conn.cursor()
 
-        try:
-            # Check that order belongs to user
-            cur.execute("""
-                        SELECT status
-                        FROM orders
-                        WHERE id = %s
-                            AND user_id = %s
-                        """, (order_id, user_id))
+        # Check that order belongs to user
+        cur.execute("""
+                    SELECT status
+                    FROM orders
+                    WHERE id = %s
+                      AND user_id = %s
+                    """, (order_id, user_id))
 
-            result = cur.fetchone()
+        result = cur.fetchone()
 
-            if not result:
-                return False, "Order not found"
+        if not result:
+            cur.close()
+            conn.close()
+            return False, "Order not found"
 
-            current_status = result[0]
+        current_status = result[0]
 
-            # Prevent cancelling again
-            if current_status == "cancelled":
-                return False, "Order already cancelled"
+        # Prevent cancelling again
+        if current_status == "cancelled":
+            cur.close()
+            conn.close()
+            return False, "Order already cancelled"
 
-                # Update status
-                cur.execute("""
-                            UPDATE orders
-                            SET status = %s
-                            WHERE id = %s
-                            """, ("cancelled", order_id))
+        # Update status
+        cur.execute("""
+                    UPDATE orders
+                    SET status = %s
+                    WHERE id = %s
+                    """, ("cancelled", order_id))
 
-                conn.commit()
+        conn.commit()
 
-                return True, "Order cancelled"
+        cur.close()
+        conn.close()
 
-            except Exception as e:
-                conn.rollback()
-                return False, str(e)
+        return True, "Order cancelled"
 
-            finally:
-                cur.close()
-                release_connection(conn)
-
-
-
-        return True, order_id
     
     def get_orders_by_user(self, user_id):
         con = psycopg2.connect(
