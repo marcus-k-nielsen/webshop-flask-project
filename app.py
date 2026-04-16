@@ -137,12 +137,8 @@ def view_cart():
 
     products_in_cart = []
 
-    # 🔥 ONE DB CALL ONLY
-    all_products = p.get_products()
-    product_dict = {product.id: product for product in all_products}
-
     for product_id, quantity in cart.items.items():
-        product = product_dict.get(int(product_id))
+        product = p.get_product_by_id(product_id)
 
         if product:
             products_in_cart.append({
@@ -159,7 +155,7 @@ def view_cart():
 
 @app.route("/add_to_cart", methods=["POST"])
 def add_to_cart():
-    product_id = int(request.form.get("product_id"))
+    product_id = request.form.get("product_id")
 
     cart = Cart()
     cart.add(product_id)
@@ -168,7 +164,7 @@ def add_to_cart():
 
 @app.route("/remove_from_cart", methods=["POST"])
 def remove_from_cart():
-    product_id = int(request.form.get("product_id"))
+    product_id = request.form.get("product_id")
 
     cart = Cart()
     cart.remove(product_id)
@@ -177,7 +173,7 @@ def remove_from_cart():
 
 @app.route("/increase_quantity", methods=["POST"])
 def increase_quantity():
-    product_id = int(request.form.get("product_id"))
+    product_id = request.form.get("product_id")
 
     cart = Cart()
     current_qty = cart.items.get(str(product_id), 0)
@@ -188,7 +184,7 @@ def increase_quantity():
 
 @app.route("/decrease_quantity", methods=["POST"])
 def decrease_quantity():
-    product_id = int(request.form.get("product_id"))
+    product_id = request.form.get("product_id")
 
     cart = Cart()
     current_qty = cart.items.get(str(product_id), 0)

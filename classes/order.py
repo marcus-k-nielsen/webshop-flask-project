@@ -2,118 +2,97 @@ import psycopg2
 from flask import session
 from classes.product import Product
 from classes.cart import Cart
-from psycopg2 import pool
 
-connection_pool = pool.SimpleConnectionPool(
-    1, 10,
+con = psycopg2.connect(
     "postgresql://postgres.ltwkdwxckpewhmtpjpvj:oCD4aNWbC7dd7MYG@aws-1-eu-west-1.pooler.supabase.com:6543/postgres"
 )
-
-def get_connection():
-    return connection_pool.getconn()
-
-def release_connection(conn):
-    connection_pool.putconn(conn)
 
 class Order:
 
     def place_order(self):
+        # 🔐 Must be logged in
         if "user_id" not in session:
             return False, "User not logged in"
 
         user_id = session["user_id"]
+
         cart = Cart()
 
         if not cart.items:
             return False, "Cart is empty"
 
-        conn = get_connection()
-        cur = conn.cursor()
+        cur = con.cursor()
 
-        try:
-            # 🔥 Get ALL products once (no loop DB calls)
-            p = Product()
-            all_products = p.get_products()
-            product_dict = {prod.id: prod for prod in all_products}
+        # 1. Calculate total
+        total_price = cart.total()
 
-            # 🔥 Calculate total safely
-            total_price = 0
-            for product_id, qty in cart.items.items():
-                product = product_dict.get(int(product_id))
-                if product:
-                    total_price += product.price * qty
+        # 2. Create order
+        cur.execute(
+            "INSERT INTO orders (user_id, status, total_price) VALUES (%s, %s, %s) RETURNING id",
+            (user_id, "placed", total_price)
+        )
 
-            # 🔥 Create order
+        order_id = cur.fetchone()[0]
+
+        # 3. Add order items
+        p = Product()
+
+        for product_id, qty in cart.items.items():
+            product = p.get_product_by_id(product_id)
+
+            if not product:
+                continue
+
             cur.execute(
-                "INSERT INTO orders (user_id, status, total_price) VALUES (%s, %s, %s) RETURNING id",
-                (user_id, "placed", total_price)
+                "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (%s, %s, %s, %s)",
+                (order_id, product_id, qty, product.price)
             )
-            order_id = cur.fetchone()[0]
 
-            # 🔥 Insert order items
-            for product_id, qty in cart.items.items():
-                product = product_dict.get(int(product_id))
+            # Optional: reduce stock
+            # product.reduce_stock(qty)
 
-                if not product:
-                    continue
+        # 4. Clear cart
+        cart.items = {}
+        cart.save()
 
-                cur.execute(
-                    "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (%s, %s, %s, %s)",
-                    (order_id, int(product_id), qty, product.price)
-                )
+        con.commit()
+        cur.close()
 
-            # 🔥 Clear cart
-            cart.items = {}
-            cart.save()
-
-            conn.commit()
-
-            return True, order_id
-
-        except Exception as e:
-            conn.rollback()
-            return False, str(e)
-
-        finally:
-            cur.close()
-            release_connection(conn)
+        return True, order_id
     
     def get_orders_by_user(self, user_id):
-        conn = get_connection()
-        cur = conn.cursor()
+        cur = con.cursor()
 
-        try:
+        cur.execute("""
+            SELECT id, created_at, status, total_price
+            FROM orders
+            WHERE user_id = %s
+            ORDER BY created_at DESC
+        """, (user_id,))
+
+        orders = cur.fetchall()
+
+        result = []
+
+        for order in orders:
+            order_id = order[0]
+
+            # Get items for each order
             cur.execute("""
-                SELECT id, created_at, status, total_price
-                FROM orders
-                WHERE user_id = %s
-                ORDER BY created_at DESC
-            """, (user_id,))
+                SELECT product_id, quantity, price
+                FROM order_items
+                WHERE order_id = %s
+            """, (order_id,))
 
-            orders = cur.fetchall()
-            result = []
+            items = cur.fetchall()
 
-            for order in orders:
-                order_id = order[0]
+            result.append({
+                "id": order[0],
+                "created_at": order[1],
+                "status": order[2],
+                "total": order[3],
+                "items": items
+            })
 
-                cur.execute("""
-                    SELECT product_id, quantity, price
-                    FROM order_items
-                    WHERE order_id = %s
-                """, (order_id,))
-
-                items = cur.fetchall()
-
-                result.append({
-                    "id": order[0],
-                    "created_at": order[1],
-                    "status": order[2],
-                    "total": order[3],
-                    "items": items
-                })
-
-            return result
-
-        finally:
-            cur.close()
-            release_connection(conn)
+        cur.close()
+        return result
