@@ -58,6 +58,7 @@ class Order:
         con.commit()
         cur.close()
         con.close()
+        return True, "Order placed successfully"
 
     def cancel_order(self, order_id):
         if "user_id" not in session:
