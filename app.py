@@ -194,6 +194,7 @@ def decrease_quantity():
     return redirect(url_for("view_cart"))
 
 
+
 @app.route("/place_order", methods=["POST"])
 def place_order():
     order = Order()

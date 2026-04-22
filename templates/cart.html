@@ -26,7 +26,7 @@
         box-shadow: 0 6px 20px rgba(0,0,0,0.08);
     }
 
-    /* LEFT SIDE: IMAGE + TEXT */
+    /* VENSTRE SIDE: BILLEDE + TEKST */
     .item-info {
         display: flex;
         align-items: center;
@@ -35,8 +35,8 @@
     }
 
     .item-info img {
-        width: 120px;
-        height: 120px;
+        width: 100px;
+        height: 100px;
         object-fit: contain;
         border-radius: 12px;
         background: #f8f8f8;
@@ -44,65 +44,128 @@
     }
 
     .item-text h2 {
-        margin: 0 0 8px 0;
+        margin: 0 0 5px 0;
         color: #3e2c23;
         font-size: 18px;
     }
 
     .item-text p {
-        margin: 3px 0;
+        margin: 2px 0;
         color: #6b4f3a;
     }
 
-    .item-text p:first-of-type {
+    .subtotal-text {
         font-weight: bold;
         color: #6f4e37;
+        margin-top: 5px;
     }
 
-    /* RIGHT SIDE: BUTTONS */
+    /* HØJRE SIDE: KONTROLLER */
     .item-actions {
         display: flex;
-        align-items: center;
-        gap: 10px;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 15px;
     }
 
-    .item-actions form {
+    /* KVANTITET BOKS */
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
+
+    .qty-input {
+        width: 45px;
+        height: 40px;
+        text-align: center;
+        border: none;
+        border-left: 1px solid #eee;
+        border-right: 1px solid #eee;
+        background: white;
+        font-weight: bold;
+        font-size: 16px;
+        outline: none;
+        -moz-appearance: textfield;
+    }
+
+    /* Fjerner pile i Chrome/Safari */
+    .qty-input::-webkit-outer-spin-button,
+    .qty-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
         margin: 0;
     }
 
-    .btn {
+    .btn-qty {
+        background: #fdfdfd;
         border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
+        width: 35px;
+        height: 40px;
         cursor: pointer;
-        font-weight: bold;
+        font-size: 18px;
+        color: #3e2c23;
+        transition: 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-qty:hover {
+        background: #f3e9dc;
+    }
+
+    /* DELETE KNAP */
+    .btn-delete {
+        background-color: transparent;
+        color: #a94442;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: underline;
         transition: 0.2s;
     }
 
-    .btn-add {
-        background-color: #6f4e37;
-        color: white;
+    .btn-delete:hover {
+        color: #843534;
     }
 
-    .btn-remove {
-        background-color: #ccc;
-    }
-
-    .btn-delete {
-        background-color: #a94442;
-        color: white;
-    }
-
-    .btn:hover {
-        transform: scale(1.05);
+    /* OPSUMMERING */
+    .cart-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 15px;
     }
 
     .total {
-        text-align: right;
         font-size: 22px;
         font-weight: bold;
         color: #3e2c23;
-        margin-top: 30px;
+    }
+
+    .checkout-btn {
+        text-decoration: none;
+        background: linear-gradient(135deg, #6f4e37, #3e2c23);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 12px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .checkout-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
     .empty {
@@ -110,75 +173,49 @@
         color: #6b4f3a;
         margin-top: 50px;
     }
-    .cart-summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 30px;
-    }
-
-    .checkout-btn {
-        text-decoration: none;
-        background: linear-gradient(135deg, #4caf50, #66bb6a);
-        color: white;
-        padding: 12px 20px;
-        border-radius: 12px;
-        font-weight: bold;
-        transition: 0.3s;
-    }
-
-    .checkout-btn:hover {
-        transform: scale(1.05);
-        background: linear-gradient(135deg, #43a047, #4caf50);
-    }
 </style>
 
 <div class="cart-container">
-    <h1>Your Cart</h1>
+    <h1>Din Kurv</h1>
 
     {% if cart_items %}
 
         {% for item in cart_items %}
-
         <div class="cart-item">
 
-            <!-- LEFT: IMAGE + TEXT -->
             <div class="item-info">
                 <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
-
                 <div class="item-text">
                     <h2>{{ item.product.name }}</h2>
-                    <p>Price: {{ item.product.price }} DKK</p>
-                    <p>Quantity: {{ item.quantity }}</p>
-                    <p>Subtotal: {{ item.subtotal }} DKK</p>
+                    <p>{{ item.product.price }} DKK pr. stk</p>
+                    <p class="subtotal-text">Subtotal: {{ item.subtotal }} DKK</p>
                 </div>
             </div>
 
-            <!-- RIGHT: ACTIONS -->
             <div class="item-actions">
+                
+                <div class="quantity-controls">
+                    <form action="{{ url_for('decrease_quantity') }}" method="POST" style="margin:0;">
+                        <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                        <button type="submit" class="btn-qty">-</button>
+                    </form>
 
-                <!-- ➕ -->
-                <form action="{{ url_for('increase_quantity') }}" method="POST">
-                    <input type="hidden" name="product_id" value="{{ item.product.id }}">
-                    <button class="btn btn-add">+</button>
-                </form>
+                    <input type="number" value="{{ item.quantity }}" class="qty-input" readonly>
 
-                <!-- ➖ -->
-                <form action="{{ url_for('decrease_quantity') }}" method="POST">
-                    <input type="hidden" name="product_id" value="{{ item.product.id }}">
-                    <button class="btn btn-remove">-</button>
-                </form>
+                    <form action="{{ url_for('increase_quantity') }}" method="POST" style="margin:0;">
+                        <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                        <button type="submit" class="btn-qty">+</button>
+                    </form>
+                </div>
 
-                <!-- ❌ -->
-                <form action="{{ url_for('remove_from_cart') }}" method="POST">
+                <form action="{{ url_for('remove_from_cart') }}" method="POST" style="margin:0;">
                     <input type="hidden" name="product_id" value="{{ item.product.id }}">
-                    <button class="btn btn-delete">Remove</button>
+                    <button type="submit" class="btn-delete">Fjern produkt</button>
                 </form>
 
             </div>
 
         </div>
-
         {% endfor %}
 
         <div class="cart-summary">
@@ -187,14 +224,17 @@
             </div>
 
             <form action="{{ url_for('place_order') }}" method="POST">
-                <button type="submit" class="checkout-btn">Place Order</button>
+                <button type="submit" class="checkout-btn">Gå til betaling</button>
             </form>
+        </div>
 
     {% else %}
 
         <div class="empty">
-            <h2>Your cart is empty ☕</h2>
-            <p>Go add some products!</p>
+            <h2>Din kurv er tom ☕</h2>
+            <p>Gå til shoppen og find din yndlingskaffe!</p>
+            <br>
+            <a href="/products" class="checkout-btn" style="display:inline-block; text-decoration:none;">Se produkter</a>
         </div>
 
     {% endif %}
