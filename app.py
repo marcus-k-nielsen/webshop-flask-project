@@ -93,8 +93,12 @@ def update():
         email = request.form.get("email")
         password = request.form.get("password")
 
-        user.update(firstname, lastname, address, zip, city, country, phone, email, password)
-        return redirect(url_for("home"))
+        user_result = user.update(firstname, lastname, address, zip, city, country, phone, email, password)
+
+        if user_result:
+            return redirect(url_for("home"))
+        else:
+            return render_template("update.html", user_info=user_info, error="Emailen er allerede i brug")
 
     return render_template("update.html", user_info=user_info)
 
