@@ -5,9 +5,10 @@
 <style>
     .login-container {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 70vh;
+        height: 80vh;
     }
 
     .login-card {
@@ -60,6 +61,22 @@
         margin-bottom: 15px;
         font-size: 14px;
     }
+
+    .register-link {
+        margin-top: 15px;
+        font-size: 14px;
+        color: #6b4f3a;
+    }
+
+    .register-link a {
+        color: #6f4e37;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .register-link a:hover {
+        text-decoration: underline;
+    }
 </style>
 
 <div class="login-container">
@@ -75,6 +92,11 @@
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Log ind</button>
         </form>
+
+        <div class="register-link">
+            Don’t have an account?
+            <a href="{{ url_for('register') }}">Register here</a>
+        </div>
     </div>
 </div>
 

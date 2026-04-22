@@ -18,18 +18,35 @@ def login():
         email = request.form.get("username")
         password = request.form.get("password")
 
-        print(email, password) 
-        # just to see it DELETE LATER!!!!
-
         user = User(email=email, password=password, firstname=None, lastname=None, address=None, zip=None, city=None, country=None, phone=None)
+
         if user.login(email, password):
-            return redirect(url_for("products"))
+
+            from classes.cart import Cart
+
+            cart = Cart()
+
+            # Merge guest cart
+            if "cart" in session:
+                guest_cart = session["cart"]
+
+                for product_id, qty in guest_cart.items():
+                    cart.add(product_id, qty)
+
+                session.pop("cart")
+            
+            if session.pop("checkout", False):
+                return redirect(url_for("place_order"))
+
+            return redirect(url_for("view_cart"))
+        
+
         else:
             return render_template("login.html", error="Forkert email eller password")
-    
+
     return render_template("login.html")
 
-@app.route("/register", methods=["GET", "POST"])
+@app.route("/register", methods=["GET", "POST"]) 
 def register():
     if request.method == "POST":
         firstname = request.form.get("firstname")
@@ -42,13 +59,41 @@ def register():
         email = request.form.get("email")
         password = request.form.get("password")
 
-        user = User(firstname=firstname, lastname=lastname, address=address, zip=zip, city=city, country=country, phone=phone, email=email, password=password)
+        user = User(
+            firstname=firstname,
+            lastname=lastname,
+            address=address,
+            zip=zip,
+            city=city,
+            country=country,
+            phone=phone,
+            email=email,
+            password=password
+        )
 
         if user.register(firstname, lastname, address, zip, city, country, phone, email, password):
-            return redirect(url_for("login"))
+
+            # Auto login
+            user.login(email, password)
+
+            from classes.cart import Cart
+            cart = Cart()
+
+            # Merge guest cart
+            if "cart" in session:
+                for product_id, qty in session["cart"].items():
+                    cart.add(product_id, qty)
+
+                session.pop("cart")
+
+            # Clean up flag (optional now)
+            session.pop("checkout", None)
+
+            return redirect(url_for("view_cart"))
+
         else:
             return render_template("register.html", error="Brugeren findes allerede")
-        
+
     return render_template("register.html")
 
 @app.route("/account")
@@ -196,15 +241,18 @@ def decrease_quantity():
 
 @app.route("/place_order", methods=["POST"])
 def place_order():
+
+    if "user_id" not in session:
+        session["checkout"] = True   
+        return redirect(url_for("login"))
+
     order = Order()
     success, result = order.place_order()
 
     if not success:
         return result
 
-    return redirect(url_for("account"))
-
-from classes.order import Order
+    return redirect(url_for("orders"))
 
 @app.route("/orders")
 def orders():
