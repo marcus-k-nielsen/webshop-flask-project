@@ -136,8 +136,8 @@
 <nav>
     <div class="nav-left">☕ KaffeShoppen</div>
     <div class="nav-links">
-        {# Skjul menu på forside, login og register #}
-        {% if request.path != '/' and request.path != '/login' and request.path != '/register' %}
+        {# Nu skjuler vi KUN menuen på selve forsiden (/) #}
+        {% if request.path != '/' %}
             
             <a href="/products">Products</a>
             
