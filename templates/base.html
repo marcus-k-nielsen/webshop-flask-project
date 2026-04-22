@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
     <meta charset="UTF-8">
     <title>KaffeShoppen</title>
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, #f3e9dc, #e8d8c3);
+            min-height: 100vh;
         }
 
         /* NAVBAR */
@@ -21,6 +25,8 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1000;
         }
 
         .nav-left {
@@ -32,6 +38,7 @@
         .nav-links {
             display: flex;
             gap: 25px;
+            align-items: center;
         }
 
         nav a {
@@ -39,42 +46,149 @@
             text-decoration: none;
             font-size: 15px;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
         }
 
         nav a:hover {
             color: #ffffff;
         }
 
-        /* CONTENT WRAPPER */
-        .content {
-            padding: 20px;
+        /* CART ICON */
+        .cart-icon {
+            width: 24px;
+            height: 24px;
+            fill: #f3e9dc;
+            transition: 0.3s;
         }
 
-        hr {
-            display: none; /* remove old line */
+        nav a:hover .cart-icon {
+            fill: #ffffff;
+            transform: scale(1.1);
         }
+
+        /* BURGER MENU / DROPDOWN */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropbtn {
+            background-color: #6f4e37;
+            color: white;
+            padding: 8px 18px;
+            font-size: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .dropbtn:hover {
+            background-color: #5a3e2b;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 120%;
+            background-color: #ffffff;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+            z-index: 1001;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: #3e2c23 !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block !important;
+            font-size: 14px;
+            text-align: left;
+            border-bottom: 1px solid #f8f8f8;
+        }
+
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #f3e9dc; }
+
+        .show { display: block; }
+
+        /* Login/Register knap styling */
+        .btn-auth {
+            border: 1px solid #6f4e37;
+            padding: 7px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .content { padding: 20px; }
     </style>
 </head>
-
 <body>
 
 <nav>
     <div class="nav-left">☕ KaffeShoppen</div>
-
     <div class="nav-links">
-        <a href="/">Home</a>
-        <a href="/products">Products</a>
-        <a href="/register">Register</a>
-        <a href="/login">Login</a>
-        <a href="/cart">Cart</a>
-        <a href="/account">Account</a>
+        {# Nu skjuler vi KUN menuen på selve forsiden (/) #}
+        {% if request.path != '/' %}
+            
+            <a href="/products">Products</a>
+            
+            <a href="/cart" title="Indkøbskurv">
+                <svg class="cart-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+            </a>
+
+            {% if session.get('user_id') %}
+                <div class="dropdown">
+                    <button onclick="toggleDropdown(event)" class="dropbtn">
+                        Menu ☰
+                    </button>
+                    <div id="myDropdown" class="dropdown-content">
+                        <a href="/account">Profile</a>
+                        <a href="{{ url_for('orders') }}">Orders</a>
+                        <a href="/update">Update Profile</a>
+                        <a href="/logout" style="color: #a94442 !important; font-weight: bold;">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="/login" class="btn-auth">Login / Register</a>
+            {% endif %}
+
+        {% endif %}
     </div>
 </nav>
 
 <div class="content">
-    {% block content %}
-    {% endblock %}
+    {% block content %}{% endblock %}
 </div>
+
+<script>
+function toggleDropdown(event) {
+    event.stopPropagation();
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+
+window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+</script>
 
 </body>
 </html>

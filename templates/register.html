@@ -8,67 +8,78 @@
         justify-content: center;
         align-items: center;
         padding: 60px 20px;
+        min-height: 80vh;
     }
 
     .register-card {
         background: rgba(255, 255, 255, 0.95);
         padding: 40px;
-        width: 420px;
+        width: 100%;
+        max-width: 500px; /* Gjort lidt bredere for bedre plads */
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
 
     .register-card h1 {
         text-align: center;
-        margin-bottom: 25px;
+        margin-bottom: 30px;
         color: #3e2c23;
+        font-size: 28px;
     }
 
     .form-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
+        grid-template-columns: 1fr 1fr; /* To kolonner */
+        gap: 20px; /* Luft mellem felterne */
     }
 
     .form-full {
-        grid-column: span 2;
+        grid-column: span 2; /* Felter der fylder hele bredden */
     }
 
     .register-card input {
         width: 100%;
-        padding: 10px;
+        padding: 12px 15px;
         border-radius: 10px;
-        border: 1px solid #ccc;
-        font-size: 14px;
+        border: 1px solid #ddd;
+        font-size: 15px;
         outline: none;
+        box-sizing: border-box; /* VIGTIGT: Forhindrer overlap */
+        transition: border-color 0.3s;
     }
 
     .register-card input:focus {
         border-color: #6f4e37;
+        background-color: #fff;
     }
 
     .register-card button {
         width: 100%;
-        padding: 12px;
+        padding: 14px;
+        margin-top: 25px;
         border: none;
         border-radius: 12px;
-        background: linear-gradient(135deg, #6f4e37, #8b5e3c);
+        background: linear-gradient(135deg, #6f4e37, #3e2c23);
         color: white;
+        font-size: 16px;
         font-weight: bold;
         cursor: pointer;
-        transition: 0.3s;
-        margin-top: 15px;
+        transition: transform 0.2s, background 0.3s;
     }
 
     .register-card button:hover {
-        transform: scale(1.03);
+        transform: scale(1.02);
         background: linear-gradient(135deg, #5a3e2b, #6f4e37);
     }
 
     .error {
-        color: red;
-        margin-bottom: 15px;
+        color: #a94442;
+        background: #f2dede;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
         text-align: center;
+        font-size: 14px;
     }
 </style>
 
@@ -82,7 +93,6 @@
 
         <form method="POST" action="/register">
             <div class="form-grid">
-
                 <input type="text" name="firstname" placeholder="First Name" required>
                 <input type="text" name="lastname" placeholder="Last Name" required>
 
@@ -92,16 +102,12 @@
                 <input type="text" name="city" placeholder="City" required>
 
                 <input class="form-full" type="text" name="country" placeholder="Country" required>
-
                 <input class="form-full" type="text" name="phone" placeholder="Phone Number" required>
-
                 <input class="form-full" type="email" name="email" placeholder="Email" required>
-
                 <input class="form-full" type="password" name="password" placeholder="Password" required>
-
             </div>
 
-            <button type="submit">Create User</button>
+            <button type="submit">Register Now</button>
         </form>
     </div>
 </div>

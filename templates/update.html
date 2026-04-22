@@ -6,73 +6,84 @@
     .update-container {
         display: flex;
         justify-content: center;
+        align-items: center;
         padding: 60px 20px;
+        min-height: 80vh;
     }
 
     .update-card {
         background: rgba(255, 255, 255, 0.95);
         padding: 40px;
-        width: 420px;
+        width: 100%;
+        max-width: 500px; /* Samme bredde som register-kortet */
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
 
     .update-card h1 {
         text-align: center;
-        margin-bottom: 25px;
+        margin-bottom: 30px;
         color: #3e2c23;
+        font-size: 28px;
     }
 
     .form-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 15px;
+        gap: 20px; /* Skaber luft mellem alle felter */
     }
 
     .form-full {
         grid-column: span 2;
     }
 
+    /* Styling af labels, så de står pænt over felterne */
     .form-grid div {
         display: flex;
         flex-direction: column;
+        gap: 5px;
     }
 
     label {
         font-size: 13px;
-        margin-bottom: 5px;
         color: #3e2c23;
         font-weight: 600;
+        margin-left: 5px;
     }
 
     .update-card input {
         width: 100%;
-        padding: 10px;
+        padding: 12px 15px;
         border-radius: 10px;
-        border: 1px solid #ccc;
-        font-size: 14px;
+        border: 1px solid #ddd;
+        font-size: 15px;
         outline: none;
+        box-sizing: border-box; /* FIXER OVERLAP */
+        transition: border-color 0.3s;
+        background-color: #fcfcfc;
     }
 
     .update-card input:focus {
         border-color: #6f4e37;
+        background-color: #fff;
     }
 
     .update-card button {
         width: 100%;
-        padding: 12px;
+        padding: 14px;
+        margin-top: 30px;
         border: none;
         border-radius: 12px;
-        background: linear-gradient(135deg, #6f4e37, #8b5e3c);
+        background: linear-gradient(135deg, #6f4e37, #3e2c23);
         color: white;
+        font-size: 16px;
         font-weight: bold;
         cursor: pointer;
-        transition: 0.3s;
-        margin-top: 15px;
+        transition: transform 0.2s, background 0.3s;
     }
 
     .update-card button:hover {
-        transform: scale(1.03);
+        transform: scale(1.02);
         background: linear-gradient(135deg, #5a3e2b, #6f4e37);
     }
 </style>
@@ -87,15 +98,15 @@
 
         <form method="POST" action="/update">
             <div class="form-grid">
-
+                
                 <div>
                     <label>First Name</label>
-                    <input type="text" name="firstname" value="{{ user_info[3] }}" required>
+                    <input type="text" name="firstname" value="{{ user_info[2] }}" required>
                 </div>
 
                 <div>
                     <label>Last Name</label>
-                    <input type="text" name="lastname" value="{{ user_info[4] }}" required>
+                    <input type="text" name="lastname" value="{{ user_info[3] }}" required>
                 </div>
 
                 <div class="form-full">
@@ -129,13 +140,13 @@
                 </div>
 
                 <div class="form-full">
-                    <label>Password</label>
-                    <input type="password" name="password" placeholder="Enter new password">
+                    <label>New Password (Optional)</label>
+                    <input type="password" name="password" placeholder="Leave blank to keep current">
                 </div>
 
             </div>
 
-            <button type="submit">Update Profile</button>
+            <button type="submit">Save Changes</button>
         </form>
     </div>
 </div>
