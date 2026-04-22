@@ -137,24 +137,22 @@
                 </div>
 
                 <div class="order-meta">
-                    Status: {{ order.status }} | Date: {{ order.created_at }}
+                    Status: {{ order.status }} | Date: {{ order.created_at.strftime('%d/%m-%Y %H:%M') }}
                 </div>
 
                 {% if order.status != "cancelled" %}
-    <form action="{{ url_for('cancel_order') }}" method="POST">
-        <input type="hidden" name="order_id" value="{{ order.id }}">
-        <button style="
-            background:#a94442;
-            color:white;
-            border:none;
-            padding:8px 12px;
-            border-radius:8px;
-            cursor:pointer;
-            margin-top:10px;
-        ">
-            Cancel Order
-        </button>
-    </form>
+   <button type="button" onclick="openModal({{ order.id }})" style="
+    background:#a94442;
+    color:white;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:10px;
+">
+    Cancel Order
+</button>
+
     {% endif %}
 
                 <ul class="order-items">
@@ -183,5 +181,71 @@
     </div>
 
 </div>
+
+    <div id="cancelModal" style="
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+">
+
+    <div style="
+        background:white;
+        padding:30px;
+        border-radius:15px;
+        text-align:center;
+        width:300px;
+    ">
+        <h3>Cancel Order</h3>
+        <p>Are you sure you want to cancel this order?</p>
+
+        <form id="cancelForm" method="POST">
+            <input type="hidden" name="order_id" id="modalOrderId">
+
+            <button type="submit" style="
+                background:#a94442;
+                color:white;
+                border:none;
+                padding:10px 15px;
+                border-radius:8px;
+                margin-right:10px;
+                cursor:pointer;
+            ">
+                Yes
+            </button>
+
+            <button type="button" onclick="closeModal()" style="
+                background:#ccc;
+                border:none;
+                padding:10px 15px;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+                No
+            </button>
+        </form>
+    </div>
+</div>
+
+
+    <script>
+function openModal(orderId) {
+    document.getElementById("cancelModal").style.display = "flex";
+    document.getElementById("modalOrderId").value = orderId;
+
+    // Set form action dynamically
+    document.getElementById("cancelForm").action = "/cancel_order";
+}
+
+function closeModal() {
+    document.getElementById("cancelModal").style.display = "none";
+}
+</script>
 
 {% endblock %}
